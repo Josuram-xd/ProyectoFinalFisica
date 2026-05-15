@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electricidad y Magnetismo — Simulador</title>
+
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-subtitle"><b>Electricidad y Magnetismo — Proyecto Final</b></div>
+      <div class="header-authors">Joseph Herrera Cajigas &amp; Juan Esteban Cuarán</div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- CONTROL PANEL -->
+    <section class="card control-card">
+      <div class="card-header">
+        <h2 class="card-title">Parámetros de Simulación</h2>
+      </div>
+      <div class="controls-grid">
+
+        <!-- Charge type -->
+        <div class="control-group">
+          <label class="control-label">Tipo de Carga</label>
+          <div class="radio-group" id="charge-mode">
+            <label class="radio-option">
+              <input type="radio" name="mode" value="positive" />
+              <span class="radio-visual positive-dot"></span>
+              Positiva (+)
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="mode" value="negative" />
+              <span class="radio-visual negative-dot"></span>
+              Negativa (−)
+            </label>
+            <label class="radio-option selected">
+              <input type="radio" name="mode" value="both" checked />
+              <span class="radio-visual both-dot"></span>
+              Ambas (+/−)
+            </label>
+          </div>
+        </div>
+
+        <!-- N charges -->
+        <div class="control-group">
+          <label class="control-label" for="input-N">
+            Cantidad de Cargas <span class="control-value" id="val-N">50</span>
+          </label>
+          <div class="slider-row">
+            <input type="range" id="input-N" min="5" max="200" value="50" class="slider" />
+          </div>
+          <div class="slider-limits"><span>5</span><span>200</span></div>
+        </div>
+
+        <!-- Domain L -->
+        <div class="control-group">
+          <label class="control-label" for="input-L">
+            Dominio L <span class="control-value" id="val-L">20</span>
+          </label>
+          <div class="slider-row">
+            <input type="range" id="input-L" min="5" max="50" value="20" class="slider" />
+          </div>
+          <div class="slider-limits"><span>5</span><span>50</span></div>
+        </div>
+
+        <!-- Delta -->
+        <div class="control-group">
+          <label class="control-label" for="input-delta">
+            Paso δ <span class="control-value" id="val-delta">0.50</span>
+          </label>
+          <div class="slider-row">
+            <input type="range" id="input-delta" min="0.05" max="2.0" step="0.05" value="0.5" class="slider" />
+          </div>
+          <div class="slider-limits"><span>0.05</span><span>2.0</span></div>
+        </div>
+
+        <!-- Snapshots -->
+        <div class="control-group">
+          <label class="control-label" for="input-snap">
+            Instantes (video) <span class="control-value" id="val-snap">20</span>
+          </label>
+          <div class="slider-row">
+            <input type="range" id="input-snap" min="5" max="60" value="20" class="slider" />
+          </div>
+          <div class="slider-limits"><span>5</span><span>60</span></div>
+        </div>
+
+        <!-- Run button -->
+        <div class="control-group btn-group">
+          <button class="btn-run" id="btn-run" onclick="runSimulation()">
+            <span class="btn-icon">▶</span>
+            Generar Simulación
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PROGRESS BAR (hidden initially) -->
+    <div class="progress-wrapper" id="progress-wrapper" style="display:none">
+      <div class="progress-label">
+        <span id="progress-text">Ejecutando simulación...</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- STATS BANNER (hidden initially) -->
+    <div class="stats-banner" id="stats-banner" style="display:none">
+      <div class="stat-item">
+        <div class="stat-label">Cargas +</div>
+        <div class="stat-value positive-text" id="stat-pos">—</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-label">Cargas −</div>
+        <div class="stat-value negative-text" id="stat-neg">—</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-label">Pasos aceptados</div>
+        <div class="stat-value" id="stat-steps">—</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-label">U inicial</div>
+        <div class="stat-value mono" id="stat-ui">—</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-label">U final</div>
+        <div class="stat-value mono accent-text" id="stat-uf">—</div>
+      </div>
+    </div>
+
+    <!-- RESULTS TABS -->
+    <section class="results-section" id="results-section" style="display:none">
+
+      <!-- Tab nav -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="positions" onclick="switchTab('positions', this)">
+          Posiciones
+        </button>
+        <button class="tab-btn" data-tab="field" onclick="switchTab('field', this)">
+          Campo Eléctrico
+        </button>
+        <button class="tab-btn" data-tab="heatmap" onclick="switchTab('heatmap', this)">
+          Potencial
+        </button>
+        <button class="tab-btn" data-tab="energy" onclick="switchTab('energy', this)">
+          Energía
+        </button>
+        <button class="tab-btn" data-tab="animation" onclick="switchTab('animation', this)">
+          Video
+        </button>
+        <button class="tab-btn" data-tab="table" onclick="switchTab('table', this)">
+          Posiciones
+        </button>
+        <button class="tab-btn" data-tab="error" onclick="switchTab('error', this)">
+          Análisis de Error
+        </button>
+      </div>
+
+      <!-- Tab: Positions -->
+      <div class="tab-panel active" id="tab-positions">
+        <div class="dual-plot">
+          <div class="plot-card">
+            <div class="plot-label">Configuración Inicial</div>
+            <img id="img-initial" class="plot-img" src="" alt="Posiciones iniciales" />
+          </div>
+          <div class="plot-card">
+            <div class="plot-label">Configuración Final</div>
+            <img id="img-final" class="plot-img" src="" alt="Posiciones finales" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Electric Field -->
+      <div class="tab-panel" id="tab-field">
+        <div class="dual-plot">
+          <div class="plot-card">
+            <div class="plot-label">Campo Eléctrico Inicial</div>
+            <img id="img-field-initial" class="plot-img" src="" alt="Campo eléctrico inicial" />
+          </div>
+          <div class="plot-card">
+            <div class="plot-label">Campo Eléctrico Final</div>
+            <img id="img-field" class="plot-img" src="" alt="Campo eléctrico final" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Heatmap -->
+      <div class="tab-panel" id="tab-heatmap">
+        <div class="dual-plot">
+          <div class="plot-card">
+            <div class="plot-label">Potencial Eléctrico Inicial V(x,y)</div>
+            <img id="img-potential-initial" class="plot-img" src="" alt="Potencial inicial" />
+          </div>
+          <div class="plot-card">
+            <div class="plot-label">Potencial Eléctrico Final V(x,y)</div>
+            <img id="img-heatmap" class="plot-img" src="" alt="Potencial final" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Energy -->
+      <div class="tab-panel" id="tab-energy">
+        <div class="single-plot">
+          <div class="plot-card wide">
+            <div class="plot-label">Evolución de la Energía U(t) <span class="plot-sublabel">— Función de pasos aceptados</span></div>
+            <img id="img-energy" class="plot-img" src="" alt="Energía vs tiempo" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Animation -->
+      <div class="tab-panel" id="tab-animation">
+        <div class="animation-card">
+          <div class="plot-label">Video de Simulación</div>
+          <img id="anim-img" class="plot-img anim-img" src="" alt="Frame animación" />
+          <div class="anim-controls">
+            <button class="anim-btn" onclick="animPrev()">◀</button>
+            <div class="anim-info">
+              Frame <span id="anim-cur">0</span> / <span id="anim-tot">0</span>
+            </div>
+            <button class="anim-btn" onclick="animNext()">▶</button>
+            <button class="anim-btn play-btn" id="btn-play" onclick="togglePlay()">⏵ Play</button>
+          </div>
+          <div class="anim-progress-track">
+            <div class="anim-progress-fill" id="anim-progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Positions Table -->
+      <div class="tab-panel" id="tab-table">
+        <div class="table-card">
+          <div class="plot-label">Posiciones Finales de las Cargas</div>
+          <div class="table-scroll">
+            <table class="charges-table" id="charges-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Carga</th>
+                  <th>x</th>
+                  <th>y</th>
+                </tr>
+              </thead>
+              <tbody id="charges-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Error Analysis -->
+      <div class="tab-panel" id="tab-error">
+        <div class="single-plot" style="flex-direction: column; align-items: center; gap: 1.5rem;">
+          <div class="plot-card wide">
+            <div class="plot-label">
+              Variación de Energía por Iteración
+              <span class="plot-sublabel">— |ΔU| entre pasos aceptados consecutivos</span>
+            </div>
+            <img id="img-error" class="plot-img" src="" alt="Análisis de error" />
+          </div>
+          <div class="plot-card wide">
+            <div class="plot-label">Métricas de Convergencia</div>
+            <table class="charges-table">
+              <thead>
+                <tr>
+                  <th>Métrica</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody id="error-tbody">
+                <tr><td colspan="2" style="text-align:center; color: var(--gray-400);">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>Joseph Herrera Cajigas &amp; Juan Esteban Cuarán · Electricidad y Magnetismo · Proyecto Final</p>
+  </footer>
+
+  <script src="/static/main.js"></script>
+</body>
+</html>
