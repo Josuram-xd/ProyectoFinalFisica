@@ -8,10 +8,10 @@
 pip install -r requirements.txt
 
 # 2. Ejecutar la app
-streamlit run app.py
+python app.py
 ```
 
-Luego abre tu navegador en: **http://localhost:8501**
+Luego abre tu navegador en: **http://127.0.0.1:5000**
 
 ## Funcionalidades incluidas
 
@@ -23,19 +23,19 @@ Luego abre tu navegador en: **http://localhost:8501**
 | Dominio [-L, L] × [-L, L] configurable | ✅ |
 | Scatter plot inicial vs final (rojo/azul) | ✅ |
 | Gráfica U(t) con convergencia | ✅ |
-| Mapa de calor del potencial eléctrico V(x,y) | ✅ |
-| Campo eléctrico con vectores (quiver) | ✅ |
-| Animación GIF de la evolución | ✅ |
-| Exportar datos CSV | ✅ |
+| Mapa de calor del potencial eléctrico V(x,y) inicial y final | ✅ |
+| Campo eléctrico con vectores (quiver) inicial y final | ✅ |
+| Animación de la evolución con velocidad automática | ✅ |
+| Tabla de posiciones finales | ✅ |
 | Análisis físico automático | ✅ |
 
-## Parámetros ajustables (sidebar)
+## Parámetros ajustables
 
 - **N**: número de cargas (5–100)
 - **Tipo de cargas**: solo +1 / solo -1 / mixtas
 - **L**: tamaño del dominio
 - **δ**: desplazamiento máximo por iteración
-- **Iteraciones**: 500 a 50,000
+- **Instantes (video)**: número de frames en la animación (5-60)
 - **Resolución** del campo y potencial
 
 ## Fórmulas implementadas
