@@ -58,16 +58,17 @@ def partial_energy(i, positions, charges):
     N = len(charges)
     for j in range(N):
         if i == j:
-            continue
+            continue # continue salta a la siguiente iteracion si i == j 
         distanciaX = positions[i][0] - positions[j][0]
         distanciaY = positions[i][1] - positions[j][1]
         r = np.sqrt(distanciaX**2 + distanciaY**2)
         if r < 1e-9: #evitar division por cero
-            continue
+            continue # si r es muy pequeño se omite ese par de cargas
         energia_parcial += K * charges[i] * charges[j] / r # energia de interaccion entre la carga i y la carga j
     return float(energia_parcial)
 
 
+#esta funcion se encarga de crear una grilla de puntos en el plano xy
 def make_grid(lower_bound, upper_bound, resolution=100):
     assert abs(lower_bound) == abs(upper_bound), "Los límites deben ser simétricos."
     x = np.linspace(lower_bound, upper_bound, resolution)

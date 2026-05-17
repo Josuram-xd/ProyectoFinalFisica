@@ -101,6 +101,7 @@ def simulate(
                 or (snapshot_interval is not None and accepted_steps % snapshot_interval == 0)
             )
 
+            # si se cumple la condicion de tomar una snapshot se guarda la posicion, la carga, la energia y el contador de pasos
             if should_snap:
                 snapshots.append({
                     "step": accepted_steps,
@@ -109,8 +110,10 @@ def simulate(
                     "energy": U,
                 })
         else:
+            # si la energia no disminuye se revierte el movimiento de la carga seleccionada a su posicion anterior
             positions[i] = old_pos
 
+    #al final se guarda un snapshot final con las posiciones, cargas, energia y pasos aceptados finales del sistema para poder compararlo con el inicial y analizar la evolucion del sistema a lo largo de la simulacion
     snapshots.append({
         "step": accepted_steps,
         "positions": positions.copy(),
@@ -118,6 +121,7 @@ def simulate(
         "energy": U,
     })
 
+    #retorna un diccionario con las posiciones finales, las cargas, las posiciones iniciales, el historial de energia, los snapshots y el numero de pasos aceptados para su posterior analisis y visualizacion
     return {
         "positions_final": positions,
         "charges": charges,
