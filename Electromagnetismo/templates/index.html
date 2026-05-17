@@ -164,7 +164,7 @@
           Video
         </button>
         <button class="tab-btn" data-tab="table" onclick="switchTab('table', this)">
-          Posiciones
+          Tabla de Cargas
         </button>
         <button class="tab-btn" data-tab="error" onclick="switchTab('error', this)">
           Análisis de Error
@@ -244,20 +244,28 @@
 
       <!-- Tab: Positions Table -->
       <div class="tab-panel" id="tab-table">
-        <div class="table-card">
-          <div class="plot-label">Posiciones Finales de las Cargas</div>
-          <div class="table-scroll">
-            <table class="charges-table" id="charges-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Carga</th>
-                  <th>x</th>
-                  <th>y</th>
-                </tr>
-              </thead>
-              <tbody id="charges-tbody"></tbody>
-            </table>
+        <div class="dual-plot">
+          <div class="table-card">
+            <div class="plot-label">Posiciones Iniciales</div>
+            <div class="table-scroll">
+              <table class="charges-table">
+                <thead>
+                  <tr><th>#</th><th>Carga</th><th>x</th><th>y</th></tr>
+                </thead>
+                <tbody id="charges-tbody-initial"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="table-card">
+            <div class="plot-label">Posiciones Finales</div>
+            <div class="table-scroll">
+              <table class="charges-table">
+                <thead>
+                  <tr><th>#</th><th>Carga</th><th>x</th><th>y</th></tr>
+                </thead>
+                <tbody id="charges-tbody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

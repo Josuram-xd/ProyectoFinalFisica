@@ -174,18 +174,22 @@ function showResults(result) {
   showAnimFrame(0);
   document.getElementById("anim-tot").textContent = animationFrames.length;
 
-  const tbody = document.getElementById("charges-tbody");
-  tbody.innerHTML = "";
-  result.positions_table.forEach(row => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${row.id}</td>
-      <td class="${row.sign === '+' ? 'charge-plus' : 'charge-minus'}">${row.sign}1</td>
-      <td>${row.x}</td>
-      <td>${row.y}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+  const fillTable = (tbodyId, rows) => {
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = "";
+    rows.forEach(row => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.id}</td>
+        <td class="${row.sign === '+' ? 'charge-plus' : 'charge-minus'}">${row.sign}1</td>
+        <td>${row.x}</td>
+        <td>${row.y}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  };
+  fillTable("charges-tbody", result.positions_table);
+  fillTable("charges-tbody-initial", result.positions_table_initial);
 
   document.getElementById("results-section").style.display      = "flex";
   document.getElementById("results-section").style.flexDirection = "column";

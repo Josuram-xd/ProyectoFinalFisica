@@ -118,6 +118,16 @@ def run_simulation_job(job_id, params):
             for i, (pos, q) in enumerate(zip(positions_f, charges))
         ]
 
+        positions_table_initial = [
+            {
+                "id":   i + 1,
+                "sign": "+" if q > 0 else "−",
+                "x":    round(float(pos[0]), 2),
+                "y":    round(float(pos[1]), 2),
+            }
+            for i, (pos, q) in enumerate(zip(positions_i, charges))
+        ]
+
         # ── 3. Gráficas estáticas en paralelo ────────────────────────
         jobs[job_id]["progress"] = 50
 
@@ -184,6 +194,7 @@ def run_simulation_job(job_id, params):
             "error_metrics":         error_metrics,
             "animation_frames":      animation_frames,
             "positions_table":       positions_table,
+            "positions_table_initial": positions_table_initial,
         }
 
     except Exception as e:
