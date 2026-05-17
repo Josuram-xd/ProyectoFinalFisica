@@ -55,7 +55,7 @@ Luego abre tu navegador en: **http://127.0.0.1:5000**
 
 **Energía potencial total**
 
-$$U = k \sum_{i<j} \frac{q_i \, q_j}{|\vec{r}_i - \vec{r}_j|}$$
+$U = k \sum_{i<j} \frac{q_i \, q_j}{|\vec{r}_i - \vec{r}_j|}$$
 
 **Campo eléctrico**
 
