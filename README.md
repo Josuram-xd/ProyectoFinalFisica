@@ -1,4 +1,4 @@
-#  Simulación de Cargas Eléctricas
+$#  Simulación de Cargas Eléctricas
 
 **Universidad Cooperativa de Colombia · M.Sc. Alejandro Molina**
 
@@ -55,12 +55,18 @@ Luego abre tu navegador en: **http://127.0.0.1:5000**
 
 **Energía potencial total**
 
-$U = k \sum_{i<j} \frac{q_i \, q_j}{|\vec{r}_i - \vec{r}_j|}$
+```math
+U = k \sum_{i<j} \frac{q_i \, q_j}{|\vec{r}_i - \vec{r}_j|}
+```
 
 **Campo eléctrico**
 
-$$\vec{E}(\vec{r}) = k \sum_{i} \frac{q_i \,(\vec{r} - \vec{r}_i)}{|\vec{r} - \vec{r}_i|^3}$$
+```math
+\vec{E}(\vec{r}) = k \sum_{i} \frac{q_i \,(\vec{r} - \vec{r}_i)}{|\vec{r} - \vec{r}_i|^3}
+```
 
 **Potencial eléctrico**
 
-$$V(\vec{r}) = k \sum_{i} \frac{q_i}{|\vec{r} - \vec{r}_i|}$$
+```math
+V(\vec{r}) = k \sum_{i} \frac{q_i}{|\vec{r} - \vec{r}_i|}
+```
