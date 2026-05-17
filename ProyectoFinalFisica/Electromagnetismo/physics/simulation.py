@@ -3,8 +3,27 @@ from .energy import partial_energy, total_electrostatic_energy
 
 
 def initialize_charges(N=50, L=20, mode="both", seed=None):
+    """
+    Posiciones iniciales en puntos enteros de la grilla [-L, L] x [-L, L].
+    Se eligen N puntos sin repetición al azar dentro de esa grilla entera.
+    """
     rng = np.random.default_rng(seed)
-    positions = rng.uniform(-L, L, size=(N, 2))
+
+    # Grilla de todos los puntos enteros disponibles
+    coords = np.arange(-L, L + 1)          # -L, -L+1, ..., L
+    xs, ys = np.meshgrid(coords, coords)
+    grid   = np.column_stack([xs.ravel(), ys.ravel()])  # todos los puntos enteros
+
+    total_points = len(grid)
+    if N > total_points:
+        raise ValueError(
+            f"N={N} supera los puntos enteros disponibles en el dominio "
+            f"[-{L},{L}]² ({total_points} puntos). Reduce N o aumenta L."
+        )
+
+    # Samplear N puntos sin reemplazo
+    chosen    = rng.choice(total_points, size=N, replace=False)
+    positions = grid[chosen].astype(float)
 
     if mode == "positive":
         charges = np.ones(N)
