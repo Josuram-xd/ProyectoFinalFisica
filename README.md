@@ -1,5 +1,10 @@
-# ⚡ Simulación de Cargas Eléctricas
+#  Simulación de Cargas Eléctricas
+
 **Universidad Cooperativa de Colombia · M.Sc. Alejandro Molina**
+
+Aplicación web interactiva para simular la minimización de energía potencial de un sistema de *N* cargas eléctricas puntuales dentro de un dominio cuadrado configurable, con visualizaciones en tiempo real.
+
+---
 
 ## Instalación y ejecución
 
@@ -13,38 +18,55 @@ python app.py
 
 Luego abre tu navegador en: **http://127.0.0.1:5000**
 
-## Funcionalidades incluidas
+---
+
+## Funcionalidades
 
 | Funcionalidad | Estado |
-|---|---|
-| N=50 cargas con posiciones aleatorias | ✅ |
-| Cargas qi = ±1 (solo +, solo -, mixtas) | ✅ |
-| Algoritmo de minimización de energía | ✅ |
-| Dominio [-L, L] × [-L, L] configurable | ✅ |
-| Scatter plot inicial vs final (rojo/azul) | ✅ |
-| Gráfica U(t) con convergencia | ✅ |
-| Mapa de calor del potencial eléctrico V(x,y) inicial y final | ✅ |
-| Campo eléctrico con vectores (quiver) inicial y final | ✅ |
+|---|:---:|
+| N cargas con posiciones aleatorias (5–100) | ✅ |
+| Cargas `qᵢ = ±1` (solo +, solo −, mixtas) | ✅ |
+| Algoritmo de minimización de energía (Monte Carlo) | ✅ |
+| Dominio `[−L, L] × [−L, L]` configurable | ✅ |
+| Scatter plot inicial vs final (rojo / azul) | ✅ |
+| Gráfica de convergencia `U(t)` | ✅ |
+| Mapa de calor del potencial eléctrico `V(x, y)` | ✅ |
+| Campo eléctrico vectorial (quiver) inicial y final | ✅ |
 | Animación de la evolución con velocidad automática | ✅ |
 | Tabla de posiciones finales | ✅ |
 | Análisis físico automático | ✅ |
 
+---
+
 ## Parámetros ajustables
 
-- **N**: número de cargas (5–100)
-- **Tipo de cargas**: solo +1 / solo -1 / mixtas
-- **L**: tamaño del dominio
-- **δ**: desplazamiento máximo por iteración
-- **Instantes (video)**: número de frames en la animación (5-60)
-- **Resolución** del campo y potencial
+| Parámetro | Descripción |
+|---|---|
+| **N** | Número de cargas |
+| **Tipo** | Solo `+1` / solo `−1` / mixtas |
+| **L** | Tamaño del dominio |
+| **δ** | Desplazamiento máximo por iteración |
+| **Instantes** | Número de frames en la animación (5–60) |
+| **Resolución** | Resolución de la grilla para campo y potencial |
+
+---
 
 ## Fórmulas implementadas
 
-**Energía total:**
-U = k Σ_{i<j} q_i q_j / |r_i - r_j|
+**Energía potencial total**
 
-**Campo eléctrico:**
-E⃗(r⃗) = k Σ_i q_i (r⃗ - r⃗_i) / |r⃗ - r⃗_i|³
+```
+U = k · Σ_{i<j}  qᵢ qⱼ / |rᵢ − rⱼ|
+```
 
-**Potencial eléctrico:**
-V(r⃗) = k Σ_i q_i / |r⃗ - r⃗_i|
+**Campo eléctrico**
+
+```
+E⃗(r⃗) = k · Σᵢ  qᵢ (r⃗ − r⃗ᵢ) / |r⃗ − r⃗ᵢ|³
+```
+
+**Potencial eléctrico**
+
+```
+V(r⃗) = k · Σᵢ  qᵢ / |r⃗ − r⃗ᵢ|
+```
