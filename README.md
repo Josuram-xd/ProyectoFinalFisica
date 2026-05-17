@@ -55,18 +55,12 @@ Luego abre tu navegador en: **http://127.0.0.1:5000**
 
 **Energía potencial total**
 
-```
-U = k · Σ_{i<j}  qᵢ qⱼ / |rᵢ − rⱼ|
-```
+$$U = k \sum_{i<j} \frac{q_i \, q_j}{|\vec{r}_i - \vec{r}_j|}$$
 
 **Campo eléctrico**
 
-```
-E⃗(r⃗) = k · Σᵢ  qᵢ (r⃗ − r⃗ᵢ) / |r⃗ − r⃗ᵢ|³
-```
+$$\vec{E}(\vec{r}) = k \sum_{i} \frac{q_i \,(\vec{r} - \vec{r}_i)}{|\vec{r} - \vec{r}_i|^3}$$
 
 **Potencial eléctrico**
 
-```
-V(r⃗) = k · Σᵢ  qᵢ / |r⃗ − r⃗ᵢ|
-```
+$$V(\vec{r}) = k \sum_{i} \frac{q_i}{|\vec{r} - \vec{r}_i|}$$
