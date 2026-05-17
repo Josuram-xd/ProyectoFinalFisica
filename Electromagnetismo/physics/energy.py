@@ -6,71 +6,66 @@ K = 1 / (4 * np.pi * epsilon_0)
 
 def electric_field(position, charges, gridX, gridY):
     """Campo eléctrico vectorial en una grilla 2D."""
-    E_x = np.zeros_like(gridX, dtype=np.float64)
-    E_y = np.zeros_like(gridY, dtype=np.float64)
-    for pos, q in zip(position, charges):
-        dX = gridX - pos[0]
-        dY = gridY - pos[1]
-        r  = np.sqrt(dX**2 + dY**2)
+    CampoElectricoX = np.zeros_like(gridX, dtype=np.float64)
+    CampoElectricoY = np.zeros_like(gridY, dtype=np.float64)
+    # Para cada carga sumar su contribucion al campo electrico, se usa zip para iterar sobre posiciones y cargas simultaneamente
+    for posicion, carga_q in zip(position, charges):
+        # Se calculan las distancias x, y desde la carga a cada punto de la grilla
+        distanciaX = gridX - posicion[0] # 0 porque es la coordenada x de la carga
+        distanciaY = gridY - posicion[1] # 1 porque es la coordenada y de la carga
+        r  = np.sqrt(distanciaX**2 + distanciaY**2) # distancia desde la carga al punto de la grilla
         r  = np.where(r < 1e-9, 1e-9, r)
-        E_x += K * q * dX / r**3
-        E_y += K * q * dY / r**3
-    return E_x, E_y
+        #Se calcula el campo eletrico en cada carga usando la formual E = Ke*q (r_vector / r^3) y se suma a los campos totales
+        CampoElectricoX += K * carga_q * distanciaX / r**3
+        CampoElectricoY += K * carga_q * distanciaY / r**3
+    return CampoElectricoX, CampoElectricoY
 
 
-def electric_field_magnitude(E_x, E_y):
-    return np.sqrt(E_x**2 + E_y**2)
+def electric_field_magnitude(CampoElectricoX, CampoElectricoY):
+    return np.sqrt(CampoElectricoX**2 + CampoElectricoY**2)
 
 
 def electric_potential(position, charges, gridX, gridY):
-    """Potencial eléctrico V(x,y) = k * Σ(q_i / r_i)."""
-    V = np.zeros_like(gridX, dtype=np.float64)
-    for pos, q in zip(position, charges):
-        dx = gridX - pos[0]
-        dy = gridY - pos[1]
-        r  = np.sqrt(dx**2 + dy**2)
+    #Se calcula el trabajo necesario para mover una carga desde el infinito hasta las cordenadas de la malla
+    potencialElectrico = np.zeros_like(gridX, dtype=np.float64) #el tipo de dato es float64 para evitar problemas de precision
+    # el bucle itera sobre cada carga y posicion y calcula su contribucion al potencial electrico usando la formula V = Ke*q/r y se suma al potencial total
+    for posicion, carga_q in zip(position, charges):
+        distanciaX = gridX - posicion[0]
+        distanciaY = gridY - posicion[1]
+        # Calcular la distancia r usando la definicion r - r'
+        r  = np.sqrt(distanciaX**2 + distanciaY**2)
         r  = np.where(r < 1e-9, 1e-9, r)
-        V += K * q / r
-    return V
+        potencialElectrico += K * carga_q / r
+    return potencialElectrico
 
 
 def total_electrostatic_energy(positions, charges):
-    """
-    Energía electrostática total vectorizada con NumPy.
-    U = k * Σ_{i<j} (q_i * q_j / |r_i - r_j|)
-
-    Complexity: O(N²) pero en C via NumPy, ~50x más rápido que el doble for Python.
-    """
-    # Diferencias vectorizadas: diff[i,j] = positions[i] - positions[j]
-    diff = positions[:, np.newaxis, :] - positions[np.newaxis, :, :]  # (N, N, 2)
-    dist = np.sqrt((diff ** 2).sum(axis=2))                           # (N, N)
-
-    # Máscara triangular superior (i < j) para no duplicar pares
-    mask = np.triu(np.ones_like(dist, dtype=bool), k=1)
-
-    # Evitar división por cero en diagonal (ya excluida por mask, pero por seguridad)
-    dist_safe = np.where(mask, dist, 1.0)
-
-    # Producto de cargas q_i * q_j
-    q_prod = charges[:, np.newaxis] * charges[np.newaxis, :]          # (N, N)
-
-    U = K * np.sum(q_prod[mask] / dist_safe[mask])
-    return float(U)
-
+    energia_total = 0.0
+    N = len(charges) # cantidad de cargas
+    for i in range(N):
+        for j in range(N):
+            if i !=j:
+                distanciaX = positions[i][0] - positions[j][0]
+                distanciaY = positions[i][1] - positions[j][1]
+                r = np.sqrt(distanciaX**2 + distanciaY**2)
+                if r < 1e-9: #evitar division por cero
+                    continue
+                energia_total += K * charges[i] * charges[j] / r # energia de interaccion entre las cargas i y j
+    return float(energia_total)
 
 def partial_energy(i, positions, charges):
-    """
-    Energía de interacción de la carga i con todas las demás.
-    Usado para el cálculo incremental en la simulación:
-        ΔU = partial_energy(i, new) - partial_energy(i, old)
-
-    Vectorizado: O(N) en NumPy en lugar de O(N²) completo.
-    """
-    diff = positions[i] - positions          # (N, 2)
-    dist = np.sqrt((diff ** 2).sum(axis=1))  # (N,)
-    dist[i] = np.inf                         # excluir auto-interacción
-    dist = np.where(dist < 1e-9, 1e-9, dist)
-    return float(K * np.sum(charges[i] * charges / dist))
+    energia_parcial = 0.0
+    N = len(charges)
+    for j in range(N):
+        if i == j:
+            continue
+        distanciaX = positions[i][0] - positions[j][0]
+        distanciaY = positions[i][1] - positions[j][1]
+        r = np.sqrt(distanciaX**2 + distanciaY**2)
+        if r < 1e-9: #evitar division por cero
+            continue
+        energia_parcial += K * charges[i] * charges[j] / r # energia de interaccion entre la carga i y la carga j
+    return float(energia_parcial)
 
 
 def make_grid(lower_bound, upper_bound, resolution=100):
